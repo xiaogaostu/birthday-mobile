@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070713">
+  <title>生日快乐 · 把星河送给你</title>
+  <style id="boot-critical">
+    html, body { margin: 0; min-height: 100%; background: #120818; }
+    #app.boot-pending { visibility: hidden !important; pointer-events: none !important; }
+    #boot-screen {
+      position: fixed; inset: 0; z-index: 99999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 18px; padding: 28px;
+      background:
+        radial-gradient(120% 90% at 50% 0%, rgba(120, 40, 90, .45), transparent 55%),
+        radial-gradient(90% 70% at 50% 100%, rgba(40, 20, 80, .5), transparent 60%),
+        #120818;
+      color: #ffe7f2; font-family: "PingFang SC", "Helvetica Neue", sans-serif;
+      transition: opacity .55s ease, visibility 0s linear .55s;
+    }
+    #boot-screen.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+    #boot-screen .boot-kicker {
+      font-size: 11px; letter-spacing: .42em; text-indent: .42em;
+      color: rgba(255, 214, 230, .62);
+    }
+    #boot-screen .boot-title {
+      margin: 0; font-size: clamp(28px, 8vw, 42px); font-weight: 500; letter-spacing: .18em;
+      text-indent: .18em;
+    }
+    #boot-screen .boot-sub {
+      margin: 0; font-size: 12px; letter-spacing: .18em; color: rgba(255, 230, 240, .55);
+    }
+    #boot-bar {
+      width: min(280px, 72vw); height: 6px; border-radius: 999px;
+      background: rgba(255, 255, 255, .12); overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
+    }
+    #boot-bar > i {
+      display: block; height: 100%; width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #ff8fb5, #ffd6a8 55%, #fff0d2);
+      transition: width .25s ease;
+    }
+    #boot-pct { font-size: 12px; letter-spacing: .2em; color: rgba(255, 236, 245, .72); min-height: 1.2em; }
+    #boot-tip { font-size: 11px; letter-spacing: .12em; color: rgba(255, 220, 235, .42); text-align: center; max-width: 28em; }
+  </style>
+</head>
+<body>
+<div id="boot-screen" role="status" aria-live="polite" aria-busy="true">
+  <p class="boot-kicker">HAPPY BIRTHDAY</p>
+  <h1 class="boot-title">星河准备中</h1>
+  <p class="boot-sub">正在加载祝福与星空</p>
+  <div id="boot-bar" aria-hidden="true"><i id="boot-bar-fill"></i></div>
+  <div id="boot-pct">0%</div>
+  <p id="boot-tip">第一次打开会稍慢一点，加载完成后会更顺滑</p>
+</div>
+<div id="app" class="app boot-pending" data-scene="intro">
+
+  <!-- ================= DAY / CARDS ================= -->
+  <section class="day" id="day" aria-label="生日贺卡">
+    <div class="aurora" aria-hidden="true"></div>
+    <canvas id="petals" class="petals" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="day-veil" id="dayVeil" aria-hidden="true"></div>
+
+    <div class="calligraphy" aria-hidden="true">
+      <span class="cn">生日快乐</span>
+      <span class="en">Happy Birthday</span>
+    </div>
+
+    <header class="day-top">
+      <p class="day-kicker">TODAY IS YOUR DAY <i></i> <b>吴文同学</b></p>
+    </header>
+
+    <div class="card-stage" id="cardStage">
+      <div class="card-tilt" id="cardTilt">
+        <div class="card-deck" id="cardDeck" aria-label="写满祝福的卡片"></div>
+      </div>
+    </div>
+
+    <div class="intro" id="intro">
+      <button class="open-btn" id="openBtn" type="button">
+        <span class="open-btn-main">轻触开启惊喜</span>
+        <span class="open-btn-sub">TAP TO OPEN</span>
+      </button>
+      <p class="intro-note">一份只属于你的小小宇宙</p>
+    </div>
+
+    <p class="heart-hint" id="heartHint">
+      <span class="hint-lead hint-desktop">移动鼠标 · 翻开藏在心里的祝福</span>
+      <span class="hint-lead hint-mobile">轻触屏幕 · 翻开藏在心里的祝福</span>
+      <button class="hint-action" id="heartNext" type="button">把祝福铺满整颗心 →</button>
+    </p>
+
+    <div class="wishwall-title" id="wallTitle" aria-hidden="true" role="button" tabindex="0" aria-label="轻触打开信封">
+      <div class="env-body" aria-hidden="true">
+        <div class="env-half env-half-l"></div>
+        <div class="env-half env-half-r"></div>
+      </div>
+      <div class="env-flap"></div>
+      <div class="env-letter" aria-hidden="true">
+        <span class="env-letter-lines"></span>
+        <span class="env-letter-heart">♡</span>
+      </div>
+      <div class="env-rip" aria-hidden="true"></div>
+      <div class="env-content">
+        <h2>
+          <svg class="hand-svg" viewBox="0 0 430 96" aria-hidden="true">
+            <defs>
+              <linearGradient id="hbGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#e83a5e"></stop>
+                <stop offset="0.5" stop-color="#ff8a3d"></stop>
+                <stop offset="1" stop-color="#d93a6a"></stop>
+              </linearGradient>
+            </defs>
+            <text x="205" y="70" text-anchor="middle" class="hand-text">生日快乐</text>
+            <text x="360" y="72" text-anchor="middle" class="hand-heart">♡</text>
+          </svg>
+        </h2>
+        <p>希望你天天开心，永远幸福</p>
+      </div>
+    </div>
+    <div class="env-inner" aria-hidden="true"></div>
+    <div class="env-tip" aria-hidden="true">撕开信封，藏着一片星河 ✦</div>
+
+    <button class="wall-next" id="wallNext" type="button">带着祝福去看蛋糕 →</button>
+
+    <footer class="day-foot">
+      <span>HAPPY BIRTHDAY</span>
+      <span class="day-foot-line"></span>
+      <span>TO THE ONE I LOVE</span>
+    </footer>
+  </section>
+
+  <!-- ================= NIGHT / CAKE ================= -->
+  <section class="night" id="night" aria-label="星空生日蛋糕">
+    <div class="night-bg" aria-hidden="true"></div>
+    <div class="night-rays" aria-hidden="true"></div>
+    <canvas id="cake" class="cake" aria-hidden="true"></canvas>
+    <canvas id="fx" class="fx" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="night-vignette" aria-hidden="true"></div>
+    <div class="blow-burst" id="blowBurst" aria-hidden="true"></div>
+
+    <div class="night-world" id="nightWorld">
+      <div class="night-copy" id="nightCopy">
+        <p class="eyebrow">A LITTLE UNIVERSE, JUST FOR YOU</p>
+        <h1>把星河，<br class="br-m">送给你。</h1>
+        <p class="night-sub">希望你天天开心，永远幸福</p>
+        <p class="night-wish">祝你生日快乐</p>
+        <button class="letter-btn" id="letterBtn" type="button">
+          <span>给你的一封信</span><i>↗</i>
+        </button>
+      </div>
+
+      <p class="script" aria-hidden="true">happy birthday</p>
+
+      <div class="night-bottom">
+        <div class="toast" id="toast" role="status" aria-live="polite">
+          <b>愿望已送达！</b>
+          <span>希望你天天开心，永远幸福</span>
+          <em>再点一下蜡烛，可以重新点亮</em>
+        </div>
+
+        <button class="blow-btn" id="blowBtn" type="button">
+          <span class="flame-ico" id="flameIco" aria-hidden="true"></span>
+          <span id="blowText">许个愿，吹灭蜡烛</span>
+        </button>
+
+        <div class="fx-tabs" id="fxTabs" role="tablist" aria-label="切换氛围效果">
+          <button class="fx-tab active" role="tab" aria-selected="true" data-mode="stars" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.1 7.9L22 12l-7.9 2.1L12 22l-2.1-7.9L2 12l7.9-2.1z"/></svg>
+            星河
+          </button>
+          <button class="fx-tab" role="tab" aria-selected="false" data-mode="snow" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M3.3 7l17.4 10M20.7 7L3.3 17"/></svg>
+            小雪
+          </button>
+          <button class="fx-tab" role="tab" aria-selected="false" data-mode="meteor" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20L17 7M14 4l6 6M8 12l4 4"/><path d="M18 3l.8 2.2L21 6l-2.2.8L18 9l-.8-2.2L15 6l2.2-.8z"/></svg>
+            流星雨
+          </button>
+          <button class="fx-tab" role="tab" aria-selected="false" data-mode="halo" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="10" ry="4.5"/><ellipse cx="12" cy="12" rx="4.5" ry="10"/></svg>
+            梦幻光环
+          </button>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="ghost-btn" id="relightBtn" type="button" hidden>重新点亮蜡烛</button>
+        <button class="ghost-btn" id="replayBtn" type="button">重看开场 ↺</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LETTER ================= -->
+  <div class="letter" id="letter" aria-hidden="true">
+    <div class="letter-backdrop" id="letterBackdrop"></div>
+    <article class="letter-card" role="dialog" aria-modal="true" aria-labelledby="letterTitle">
+      <span class="letter-fold" aria-hidden="true"></span>
+      <span class="letter-stamp" aria-hidden="true">
+        <em>♥</em>
+        <small>HBD</small>
+      </span>
+      <span class="letter-seal" aria-hidden="true"></span>
+      <button class="letter-close" id="letterClose" type="button" aria-label="关闭这封信">×</button>
+      <p class="letter-from" aria-hidden="true">A letter for you</p>
+      <h3 id="letterTitle">致特别的你：</h3>
+      <div class="letter-body" id="letterBody"></div>
+      <p class="letter-sign">祝福你的人</p>
+    </article>
+  </div>
+
+  <!-- ================= NOTE READER ================= -->
+  <div class="note-reader" id="noteReader" aria-hidden="true">
+    <div class="note-reader-backdrop" id="noteBackdrop"></div>
+    <article class="note-paper" id="notePaper" role="dialog" aria-modal="true" aria-labelledby="noteMain">
+      <span class="note-tape" aria-hidden="true"></span>
+      <button class="note-close" id="noteClose" type="button" aria-label="关闭这张便利贴">×</button>
+      <p class="note-kicker">A NOTE FOR YOU <span id="noteIndex">01 / 90</span></p>
+      <h3 class="note-main" id="noteMain"></h3>
+      <p class="note-sub" id="noteSub"></p>
+      <div class="note-actions">
+        <button class="note-save" id="noteSave" type="button">收下这句祝福 ♡</button>
+        <button class="note-next" id="noteNext" type="button">把祝福铺满整颗心 →</button>
+      </div>
+      <p class="note-hint">点击空白处关闭 · Esc 也可以</p>
+    </article>
+  </div>
+
+  <div class="flash" id="flash" aria-hidden="true"></div>
+  <p class="sr-only" id="live" aria-live="polite"></p>
+</div>
+
+<!-- 全局悬浮：声音开关（所有场景可见） -->
+<button class="global-sound on" id="soundBtn" type="button" aria-pressed="true" aria-label="声音已开启，点击关闭">
+  <span class="sound-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="waves" d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12"/></svg></span>
+  <span id="soundText">声音已开启</span>
+</button>
+
+<!-- 全局悬浮：自定义设置（所有场景可见） -->
+<button class="global-sound settings-btn" id="settingsBtn" type="button" aria-label="自定义设置">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.55V21a2 2 0 11-4 0v-.09a1.7 1.7 0 00-1-1.55 1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.7 1.7 0 00.34-1.87 1.7 1.7 0 00-1.55-1H3a2 2 0 110-4h.09a1.7 1.7 0 001.55-1 1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06a1.7 1.7 0 001.87.34h.01a1.7 1.7 0 001-1.55V3a2 2 0 114 0v.09a1.7 1.7 0 001 1.55h.01a1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06a1.7 1.7 0 00-.34 1.87v.01a1.7 1.7 0 001.55 1H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.55 1z"/></svg>
+  <span>设置</span>
+</button>
+
+<!-- ================= SETTINGS ================= -->
+<div class="settings" id="settings" aria-hidden="true">
+  <div class="settings-backdrop" id="settingsBackdrop"></div>
+  <article class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <button class="settings-close" id="settingsClose" type="button" aria-label="关闭设置">×</button>
+    <h3 id="settingsTitle">自定义设置</h3>
+    <p class="settings-sub">把名字和一封信改成你的样子。保存后本浏览器立即生效；再点“导出成品配置”，把生成的 custom.js 放进生日文件夹，朋友打开就是成品。</p>
+    <label class="settings-field" for="setName">人物名字
+      <input id="setName" type="text" maxlength="12" autocomplete="off">
+    </label>
+    <label class="settings-field" for="setLetterTitle">信的主题
+      <input id="setLetterTitle" type="text" maxlength="20" autocomplete="off">
+    </label>
+    <label class="settings-field" for="setLetterSign">信的署名
+      <input id="setLetterSign" type="text" maxlength="20" autocomplete="off">
+    </label>
+    <label class="settings-field" for="setLetter">信的内容（每行一段）
+      <textarea id="setLetter" rows="6" spellcheck="false"></textarea>
+    </label>
+    <div class="settings-actions">
+      <button class="settings-save" id="setSave" type="button">保存</button>
+      <button class="settings-ghost" id="setReset" type="button">恢复默认</button>
+      <button class="settings-ghost" id="setExport" type="button">导出成品配置</button>
+      <button class="settings-ghost" id="setImport" type="button">导入配置</button>
+    </div>
+    <p class="settings-hint" id="settingsHint">提示：导入配置可从已有的 custom.js 或备份 JSON 中恢复。</p>
+    <input type="file" id="setImportFile" accept="application/json,.json" hidden>
+  </article>
+</div>
+
+<!-- 首次进入星空蛋糕页的引导提示 -->
+<div class="first-hint" id="firstHint" aria-hidden="true">轻触蛋糕翻转 · 点蜡烛吹灭 · 点星星许愿</div>
+
+<audio id="bgm" preload="auto" loop playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="true"></audio>
+
+<!-- 资源由 boot-loader.js 全部预加载完成后再注入脚本并进入页面；原业务逻辑未改 -->
+<script src="boot-loader.js"></script>
+</body>
+</html>
