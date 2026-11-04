@@ -185,83 +185,36 @@
     const c = canvas2d(W, H);
     const g = c.getContext('2d');
 
-    // deep navy base — keep the side as a deep-blue star sky (示例 glaze)
+    // chromatic night glaze — dark field, vivid clouds painted over it (not additive, so they don't clip to white)
     const bg = g.createLinearGradient(0, 0, 0, H);
-    bg.addColorStop(0, '#02040e');
-    bg.addColorStop(.22, '#061033');
-    bg.addColorStop(.48, '#0a1848');
-    bg.addColorStop(.72, '#050d28');
-    bg.addColorStop(1, '#010208');
+    bg.addColorStop(0, '#070212');
+    bg.addColorStop(.22, '#12063a');
+    bg.addColorStop(.46, '#0c184e');
+    bg.addColorStop(.7, '#220840');
+    bg.addColorStop(1, '#04020c');
     g.fillStyle = bg;
     g.fillRect(0, 0, W, H);
 
-    // large soft nebula color-blocks — few, broad, calm (not碎 strokes)
-    for (let i = 0; i < 68; i++) {
-      const col = pick(['30,110,255', '40,180,255', '100,70,240', '40,220,240', '130,50,230', '190,60,255', '50,140,255', '255,70,180']);
-      const y = rand(H * .04, H * .96);
-      const h = rand(64, 230);
-      for (const ox of [-W, 0, W]) {
-        const grad = g.createLinearGradient(ox, y - h, ox + W, y + h);
-        grad.addColorStop(0, `rgba(${col},0)`);
-        grad.addColorStop(.32, `rgba(${col},${rand(.28, .55)})`);
-        grad.addColorStop(.55, `rgba(${col},${rand(.16, .38)})`);
-        grad.addColorStop(1, `rgba(${col},0)`);
-        g.fillStyle = grad;
-        g.fillRect(ox, y - h, W, h * 2);
-      }
-    }
-
-    // a few big wet brush washes — nebula blotches, not碎笔触
-    g.globalCompositeOperation = 'lighter';
-    const strokeCols = [
-      '255,95,150', '255,140,60', '255,200,80', '255,70,120',
-      '80,200,255', '140,80,255', '255,110,180', '40,170,255',
-      '255,160,70', '255,90,200'
+    const nebulaCols = [
+      '255,70,170', '255,150,60', '70,220,255', '190,90,255',
+      '255,210,90', '255,90,130', '60,255,210', '130,150,255',
+      '255,120,200', '255,180,80', '255,80,110', '90,170,255'
     ];
-    for (let i = 0; i < 36; i++) {
-      const col = pick(strokeCols);
-      const x0 = rand(0, W);
-      const y0 = rand(H * .04, H * .96);
-      const len = rand(420, 1150);
-      const thick = rand(42, 120);
-      const amp = rand(-120, 120);
-      for (const ox of [-W, 0, W]) {
-        g.save();
-        g.lineCap = 'round';
-        g.lineJoin = 'round';
-        g.strokeStyle = `rgba(${col},${rand(.28, .55)})`;
-        g.lineWidth = thick;
-        g.beginPath();
-        g.moveTo(x0 + ox, y0);
-        g.bezierCurveTo(
-          x0 + ox + len * .28, y0 + amp,
-          x0 + ox + len * .62, y0 - amp * .7,
-          x0 + ox + len, y0 + amp * .25
-        );
-        g.stroke();
-        // soft edge wash
-        g.lineWidth = thick * 1.8;
-        g.strokeStyle = `rgba(${col},${rand(.05, .12)})`;
-        g.stroke();
-        g.restore();
-      }
-    }
-
-    // sparse soft dabs — keep a little depth, not busy
-    for (let i = 0; i < 40; i++) {
-      const col = pick(strokeCols);
+    // local clouds, not full-width stripes — a dark galaxy with glowing blotches
+    for (let i = 0; i < 34; i++) {
+      const col = pick(nebulaCols);
       const x = rand(0, W);
-      const y = rand(H * .05, H * .95);
-      const rx = rand(50, 150);
-      const ry = rand(16, 48);
+      const y = rand(H * .08, H * .92);
+      const rx = rand(110, 320);
+      const ry = rand(36, 110);
       for (const ox of [-W, 0, W]) {
         g.save();
         g.translate(x + ox, y);
-        g.rotate(rand(-1.2, 1.2));
+        g.rotate(rand(-0.9, 0.9));
         const grad = g.createRadialGradient(0, 0, 0, 0, 0, rx);
-        const a = rand(.22, .5);
+        const a = rand(.5, .78);
         grad.addColorStop(0, `rgba(${col},${a})`);
-        grad.addColorStop(.45, `rgba(${col},${a * .5})`);
+        grad.addColorStop(.42, `rgba(${col},${a * .55})`);
         grad.addColorStop(1, `rgba(${col},0)`);
         g.fillStyle = grad;
         g.scale(1, ry / rx);
@@ -271,48 +224,90 @@
         g.restore();
       }
     }
-    g.globalCompositeOperation = 'source-over';
 
-    // sparse gold flecks near top band + a warm highlight stripe
-    g.globalCompositeOperation = 'lighter';
-    for (let i = 0; i < 22; i++) {
+    const strokeCols = [
+      '255,95,160', '255,150,50', '255,214,80', '255,70,130',
+      '70,220,255', '170,90,255', '255,120,190', '40,190,255',
+      '255,170,70', '255,80,210', '120,255,210', '255,110,90'
+    ];
+    for (let i = 0; i < 18; i++) {
+      const col = pick(strokeCols);
+      const x0 = rand(0, W);
+      const y0 = rand(H * .08, H * .92);
+      const len = rand(160, 420);
+      const thick = rand(18, 46);
+      const amp = rand(-70, 70);
+      for (const ox of [-W, 0, W]) {
+        g.save();
+        g.lineCap = 'round';
+        g.lineJoin = 'round';
+        g.strokeStyle = `rgba(${col},${rand(.4, .68)})`;
+        g.lineWidth = thick;
+        g.beginPath();
+        g.moveTo(x0 + ox, y0);
+        g.bezierCurveTo(
+          x0 + ox + len * .28, y0 + amp,
+          x0 + ox + len * .62, y0 - amp * .6,
+          x0 + ox + len, y0 + amp * .2
+        );
+        g.stroke();
+        g.restore();
+      }
+    }
+
+    for (let i = 0; i < 28; i++) {
+      const col = pick(strokeCols);
       const x = rand(0, W);
-      g.fillStyle = `rgba(255,215,120,${rand(.18, .4)})`;
+      const y = rand(H * .06, H * .94);
+      const rx = rand(40, 120);
+      const ry = rand(14, 40);
+      for (const ox of [-W, 0, W]) {
+        g.save();
+        g.translate(x + ox, y);
+        g.rotate(rand(-1.2, 1.2));
+        const grad = g.createRadialGradient(0, 0, 0, 0, 0, rx);
+        const a = rand(.4, .7);
+        grad.addColorStop(0, `rgba(${col},${a})`);
+        grad.addColorStop(.5, `rgba(${col},${a * .4})`);
+        grad.addColorStop(1, `rgba(${col},0)`);
+        g.fillStyle = grad;
+        g.scale(1, ry / rx);
+        g.beginPath();
+        g.arc(0, 0, rx, 0, TAU);
+        g.fill();
+        g.restore();
+      }
+    }
+
+    // thin warm flecks only — keep them from lifting the whole glaze
+    g.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 16; i++) {
+      const x = rand(0, W);
+      g.fillStyle = `rgba(255,215,120,${rand(.12, .28)})`;
       g.beginPath();
-      g.ellipse(x, rand(6, 62), rand(10, 34), rand(5, 18), rand(-.5, .5), 0, TAU);
+      g.ellipse(x, rand(6, 48), rand(8, 22), rand(4, 12), rand(-.4, .4), 0, TAU);
       g.fill();
     }
-    // a couple of soft ribbons only (side gloss hint)
-    for (let i = 0; i < 10; i++) {
-      const y = rand(H * .28, H * .72);
-      const grad = g.createLinearGradient(0, y - 30, W, y + 30);
-      const col = pick(['255,160,70', '255,90,150', '255,210,100', '120,190,255']);
-      grad.addColorStop(0, `rgba(${col},0)`);
-      grad.addColorStop(.35, `rgba(${col},${rand(.1, .22)})`);
-      grad.addColorStop(.65, `rgba(${col},${rand(.06, .16)})`);
-      grad.addColorStop(1, `rgba(${col},0)`);
-      g.fillStyle = grad;
-      g.fillRect(0, y - 40, W, 80);
-    }
     g.globalCompositeOperation = 'source-over';
 
-    // restrained gold dust baked into glaze — few, bright flecks only
+    // multicolor glitter baked into the glaze — cream, gold, pink, cyan
+    const dustCols = ['#fff6e0', '#ffe08a', '#ff9a4a', '#ff7ad4', '#7ef0ff', '#ffffff', '#ffd24a', '#d9a0ff'];
     for (let i = 0; i < 4200; i++) {
       const x = rand(0, W);
       const y = rand(0, H);
-      g.globalAlpha = rand(.35, .9);
-      g.fillStyle = i % 4 === 0 ? '#ffe08a' : (i % 10 === 0 ? '#ff9a4a' : '#fff6e0');
+      g.globalAlpha = rand(.45, .95);
+      g.fillStyle = dustCols[i % dustCols.length];
       g.beginPath();
       g.arc(x, y, rand(.3, 1.5), 0, TAU);
       g.fill();
     }
     g.globalAlpha = 1;
-    for (let i = 0; i < 190; i++) {
+    for (let i = 0; i < 280; i++) {
       const x = rand(0, W);
       const y = rand(0, H);
-      g.fillStyle = pick(['#ffd34f', '#ffe28a', '#ffb84a', '#fff1b0', '#ffffff', '#ff9a3c', '#ff6ad0', '#7be8ff']);
-      g.globalAlpha = rand(.7, 1);
-      drawStarPath(g, x, y, rand(4, 13), rand(1.6, 5), 5, rand(0, TAU));
+      g.fillStyle = pick(['#ffd34f', '#ffe28a', '#ffb84a', '#fff1b0', '#ffffff', '#ff9a3c', '#ff6ad0', '#7be8ff', '#ff4fa8', '#c9a0ff']);
+      g.globalAlpha = rand(.78, 1);
+      drawStarPath(g, x, y, rand(5, 16), rand(1.8, 6), 5, rand(0, TAU));
       g.fill();
     }
     // a few gold-dominated flecks (少量金屑)
@@ -342,24 +337,27 @@
     const S = 720;
     const c = canvas2d(S, S);
     const g = c.getContext('2d');
-    g.fillStyle = '#050410';
+    g.fillStyle = '#120818';
     g.fillRect(0, 0, S, S);
 
-    // swirling concentric purple / orange / yellow (demo top) + warm candle wash
+    // swirling gold / magenta / cyan frosting + a warm candle pool
     const cx = S * .5, cy = S * .5;
     for (let i = 22; i >= 0; i--) {
       const t = i / 22;
       const r = S * (.07 + t * .44);
-      const grad = g.createRadialGradient(cx, cy, r * .5, cx, cy, r);
-      if (i % 3 === 0) {
-        grad.addColorStop(0, `rgba(255,220,90,${.34 + (1 - t) * .4})`);
-        grad.addColorStop(1, 'rgba(255,150,40,0)');
-      } else if (i % 3 === 1) {
-        grad.addColorStop(0, `rgba(210,90,255,${.28 + (1 - t) * .34})`);
-        grad.addColorStop(1, 'rgba(140,40,240,0)');
-      } else {
-        grad.addColorStop(0, `rgba(255,70,160,${.26 + (1 - t) * .32})`);
+      const grad = g.createRadialGradient(cx, cy, r * .45, cx, cy, r);
+      if (i % 4 === 0) {
+        grad.addColorStop(0, `rgba(255,214,80,${.48 + (1 - t) * .38})`);
+        grad.addColorStop(1, 'rgba(255,140,40,0)');
+      } else if (i % 4 === 1) {
+        grad.addColorStop(0, `rgba(230,80,255,${.4 + (1 - t) * .34})`);
+        grad.addColorStop(1, 'rgba(160,40,240,0)');
+      } else if (i % 4 === 2) {
+        grad.addColorStop(0, `rgba(255,70,160,${.4 + (1 - t) * .32})`);
         grad.addColorStop(1, 'rgba(255,40,130,0)');
+      } else {
+        grad.addColorStop(0, `rgba(80,230,255,${.32 + (1 - t) * .28})`);
+        grad.addColorStop(1, 'rgba(40,180,255,0)');
       }
       g.fillStyle = grad;
       g.beginPath();
@@ -368,10 +366,11 @@
     }
 
     const wash = g.createRadialGradient(cx, cy, 0, cx, cy, S * .5);
-    wash.addColorStop(0, 'rgba(255,242,180,.72)');
-    wash.addColorStop(.28, 'rgba(255,190,100,.36)');
-    wash.addColorStop(.55, 'rgba(210,110,255,.2)');
-    wash.addColorStop(1, 'rgba(4,3,12,0)');
+    wash.addColorStop(0, 'rgba(255,246,200,.86)');
+    wash.addColorStop(.22, 'rgba(255,186,90,.48)');
+    wash.addColorStop(.48, 'rgba(255,110,190,.28)');
+    wash.addColorStop(.72, 'rgba(140,90,255,.16)');
+    wash.addColorStop(1, 'rgba(8,4,20,0)');
     g.fillStyle = wash;
     g.fillRect(0, 0, S, S);
 
@@ -404,11 +403,11 @@
 
     // thin luminous lavender / purple disc (demo plate — airy, not opaque)
     const base = g.createRadialGradient(cx, cy, 0, cx, cy, S * .5);
-    base.addColorStop(0, 'rgba(255,245,255,.95)');
-    base.addColorStop(.18, 'rgba(230,200,255,.9)');
-    base.addColorStop(.42, 'rgba(196,160,255,.82)');
-    base.addColorStop(.7, 'rgba(150,110,245,.7)');
-    base.addColorStop(1, 'rgba(100,70,190,.42)');
+    base.addColorStop(0, 'rgba(255,252,255,.98)');
+    base.addColorStop(.16, 'rgba(255,214,236,.94)');
+    base.addColorStop(.38, 'rgba(214,168,255,.88)');
+    base.addColorStop(.66, 'rgba(150,120,255,.76)');
+    base.addColorStop(1, 'rgba(110,70,210,.5)');
     g.fillStyle = base;
     g.beginPath();
     g.arc(cx, cy, S * .495, 0, TAU);
@@ -503,7 +502,7 @@
       this.renderer.setClearColor(0x000000, 0);
       this.renderer.outputEncoding = THREE.sRGBEncoding;
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.48;
+      this.renderer.toneMappingExposure = 1.5;
 
       this.root = new THREE.Group();
       this.root.position.set(1.78, 0.04, 0);
@@ -621,64 +620,58 @@
     }
 
     buildLights() {
-      // 更饱和的环境光 + 多色点光，做「bloom 感」靠灯光/自发光而非 CSS filter
-      this.scene.add(new THREE.AmbientLight(0x8a78cc, 0.52));
-      const hemi = new THREE.HemisphereLight(0xb8a8ff, 0x12081c, 0.72);
+      // saturated fills — bloom comes from lights and emissive, not a CSS filter
+      this.scene.add(new THREE.AmbientLight(0xc090ff, 0.36));
+      const hemi = new THREE.HemisphereLight(0xffc4ee, 0x241048, 0.58);
       this.scene.add(hemi);
 
-      const key = new THREE.DirectionalLight(0xfff0ff, 1.42);
+      const key = new THREE.DirectionalLight(0xfff6ff, 1.2);
       key.position.set(-4.5, 7, 6);
       this.scene.add(key);
 
-      const rim = new THREE.DirectionalLight(0xff8ad8, 1.55);
+      const rim = new THREE.DirectionalLight(0xff5ec4, 1.45);
       rim.position.set(5.5, 3.5, -4.5);
       this.scene.add(rim);
 
-      const warm = new THREE.DirectionalLight(0xffd090, 0.85);
+      const warm = new THREE.DirectionalLight(0xffc060, 1.15);
       warm.position.set(1.2, 5.5, 3.2);
       this.scene.add(warm);
 
-      const blue = new THREE.PointLight(0x6a9aff, 2.15, 14, 2);
+      const blue = new THREE.PointLight(0x4db4ff, 2.55, 14, 2);
       blue.position.set(-2.8, 0.4, 3.4);
       this.scene.add(blue);
 
-      const magenta = new THREE.PointLight(0xff66cc, 1.55, 11, 2);
+      const magenta = new THREE.PointLight(0xff4ec0, 2.05, 12, 2);
       magenta.position.set(2.2, 1.1, 2.6);
       this.scene.add(magenta);
 
-      const cyan = new THREE.PointLight(0x55e8ff, 1.25, 10, 2);
+      const cyan = new THREE.PointLight(0x3eecff, 1.7, 11, 2);
       cyan.position.set(-1.6, 2.2, -2.8);
       this.scene.add(cyan);
 
-      // plate uplight — brighter bloom-like wash
-      this.plateLight = new THREE.PointLight(0xe0c8ff, 4.85, 11, 2);
+      // plate uplight — pink-gold bloom under the cake
+      this.plateLight = new THREE.PointLight(0xffb4ea, 3.4, 11, 2);
       this.plateLight.position.set(0, PLATE_Y + 0.18, 0);
       this.root.add(this.plateLight);
 
-      this.candleLight = new THREE.PointLight(0xffd0a0, 4.05, 11, 2);
+      this.candleLight = new THREE.PointLight(0xffa848, 5.2, 12, 2);
       this.candleLight.position.set(0, FLAME_Y - 0.05, 0.1);
       this.root.add(this.candleLight);
 
-      const fill = new THREE.PointLight(0xb090ff, 1.45, 10, 2);
+      const fill = new THREE.PointLight(0xd060ff, 1.7, 11, 2);
       fill.position.set(2.8, 1.6, -2.5);
       this.scene.add(fill);
 
-      // soft top fill so frosting reads vivid
-      const topFill = new THREE.PointLight(0xffe8c0, 1.35, 8, 2);
+      // warm pool on the frosting
+      const topFill = new THREE.PointLight(0xffd090, 2.15, 8, 2);
       topFill.position.set(0.2, CAKE_TOP + 1.4, 1.6);
       this.root.add(topFill);
     }
 
     buildCake() {
-      const bodyMat = new THREE.MeshPhysicalMaterial({
+      const bodyMat = new THREE.MeshBasicMaterial({
         map: this.galaxy,
-        emissiveMap: this.galaxy,
-        emissive: 0x5a38bb,
-        emissiveIntensity: 1.38,
-        roughness: 0.24,
-        metalness: 0.16,
-        clearcoat: 0.92,
-        clearcoatRoughness: 0.14
+        toneMapped: false
       });
       const body = new THREE.Mesh(
         new THREE.CylinderGeometry(CAKE_R, CAKE_R * 1.012, CAKE_H, 160, 1, false),
@@ -699,13 +692,13 @@
       const rim = new THREE.Mesh(
         new THREE.TorusGeometry(CAKE_R * 1.004, 0.03, 8, 150),
         new THREE.MeshPhysicalMaterial({
-          color: 0xffe6a8,
-          roughness: 0.18,
-          metalness: 0.68,
+          color: 0xfff0c0,
+          roughness: 0.16,
+          metalness: 0.62,
           clearcoat: 1,
-          clearcoatRoughness: 0.12,
-          emissive: 0xc88820,
-          emissiveIntensity: 0.85
+          clearcoatRoughness: 0.1,
+          emissive: 0xffb030,
+          emissiveIntensity: 1.25
         })
       );
       rim.rotation.x = Math.PI / 2;
@@ -719,11 +712,11 @@
 
     buildGoldDrips() {
       const dripMat = new THREE.MeshPhysicalMaterial({
-        color: 0xffe6a0,
-        metalness: 0.74,
-        roughness: 0.18,
-        emissive: 0xd09028,
-        emissiveIntensity: 0.92,
+        color: 0xfff2c8,
+        metalness: 0.62,
+        roughness: 0.16,
+        emissive: 0xffc048,
+        emissiveIntensity: 1.22,
         clearcoat: 1
       });
       for (let i = 0; i < 34; i++) {
@@ -789,7 +782,10 @@
         d.scale.set(s, s, s);
         d.updateMatrix();
         mesh.setMatrixAt(idx, d.matrix);
-        mesh.setColorAt(idx, this.tmpColor.setHex(pick([0xffd24a, 0xffe28a, 0xffb84a, 0xfff1b0, 0xff9a3c, 0xffffff])));
+        const sideCol = Math.random() < 0.64
+          ? pick(STAR_COLORS)
+          : pick([0xffd24a, 0xffe28a, 0xfff1b0, 0xffffff, 0xffb84a]);
+        mesh.setColorAt(idx, this.tmpColor.setHex(sideCol));
       }
 
       for (let i = 0; i < plateCount; i++) {
@@ -883,9 +879,9 @@
       const under = new THREE.Mesh(
         new THREE.CircleGeometry(PLATE_R * 1.08, 64),
         new THREE.MeshBasicMaterial({
-          color: 0xc0a0ff,
+          color: 0xffb0ea,
           transparent: true,
-          opacity: 0.26,
+          opacity: 0.34,
           blending: THREE.AdditiveBlending,
           depthWrite: false,
           side: THREE.DoubleSide
@@ -912,23 +908,23 @@
         this.root.add(ring);
       }
 
-      this.addGlow(0xd8b8ff, [9.2, 2.9], new THREE.Vector3(0, PLATE_Y - 0.02, -0.2), 0.62);
-      this.addGlow(0xffffff, [4.8, 1.65], new THREE.Vector3(0, PLATE_Y + 0.05, 0.2), 0.38);
-      this.addGlow(0xffb0e8, [3.6, 1.2], new THREE.Vector3(0.8, PLATE_Y + 0.02, 0.9), 0.28);
-      this.addGlow(0x90c0ff, [6.8, 2.0], new THREE.Vector3(-0.4, PLATE_Y - 0.01, 0.5), 0.3);
-      this.addGlow(0xffd090, [3.4, 1.1], new THREE.Vector3(-0.6, PLATE_Y + 0.04, -0.7), 0.2);
+      this.addGlow(0xffc0f0, [9.2, 2.8], new THREE.Vector3(0, PLATE_Y - 0.02, -0.2), 0.48);
+      this.addGlow(0xffffff, [4.6, 1.55], new THREE.Vector3(0, PLATE_Y + 0.05, 0.2), 0.3);
+      this.addGlow(0xff78d0, [3.8, 1.3], new THREE.Vector3(0.8, PLATE_Y + 0.02, 0.9), 0.24);
+      this.addGlow(0x78d8ff, [6.4, 1.9], new THREE.Vector3(-0.4, PLATE_Y - 0.01, 0.5), 0.26);
+      this.addGlow(0xffc060, [3.6, 1.2], new THREE.Vector3(-0.6, PLATE_Y + 0.04, -0.7), 0.2);
     }
 
     buildCandle() {
       // thicker lavender / purple stick (demo)
       const candleMat = new THREE.MeshPhysicalMaterial({
-        color: 0xd0a0ff,
-        roughness: 0.34,
-        metalness: 0.08,
-        clearcoat: 0.55,
-        clearcoatRoughness: 0.35,
-        emissive: 0xaa58e0,
-        emissiveIntensity: 1.28
+        color: 0xe4b8ff,
+        roughness: 0.32,
+        metalness: 0.06,
+        clearcoat: 0.62,
+        clearcoatRoughness: 0.28,
+        emissive: 0xd070ff,
+        emissiveIntensity: 1.45
       });
       const candle = new THREE.Mesh(
         new THREE.CylinderGeometry(0.058, 0.066, CANDLE_H, 32),
@@ -966,36 +962,36 @@
         depthWrite: false
       });
       const flameSprite = new THREE.Sprite(flameMat);
-      flameSprite.scale.set(0.28, 0.66, 1);
-      flameSprite.position.set(0, 0.1, 0.025);
+      flameSprite.scale.set(0.34, 0.78, 1);
+      flameSprite.position.set(0, 0.12, 0.025);
       this.flameGroup.add(flameSprite);
       this.flameOrbs.push({
         s: flameSprite,
-        bx: 0, by: 0.1, bz: 0.025,
+        bx: 0, by: 0.12, bz: 0.025,
         phase: 0.3,
         speed: 9.5,
         baseOp: 1,
-        baseScale: 0.28,
-        baseScaleY: 0.66,
-        lift: 0.016,
+        baseScale: 0.34,
+        baseScaleY: 0.78,
+        lift: 0.018,
         isMain: true
       });
 
       // warm core spark — scaled with main flame
-      const core = this.addGlow(0xfff6d0, 0.13, new THREE.Vector3(0, 0.03, 0.035), 0.98, this.flameGroup);
+      const core = this.addGlow(0xfff6d0, 0.16, new THREE.Vector3(0, 0.04, 0.035), 1, this.flameGroup);
       this.flameOrbs.push({
-        s: core, bx: 0, by: 0.03, bz: 0.035, phase: 1.1, speed: 12,
-        baseOp: 0.98, baseScale: 0.13, lift: 0.009
+        s: core, bx: 0, by: 0.04, bz: 0.035, phase: 1.1, speed: 12,
+        baseOp: 1, baseScale: 0.16, lift: 0.01
       });
 
-      // soft halo — warm glow that lights the cake top
-      this.flameGlow = this.addGlow(0xffc080, 0.72, new THREE.Vector3(0, FLAME_Y + 0.06, 0.04), 0.55);
-      this.flameBloom = this.addGlow(0xff80d0, 0.95, new THREE.Vector3(0, FLAME_Y + 0.12, 0), 0.26);
-      this.flameHalo = this.addGlow(0xffe8c0, 0.48, new THREE.Vector3(0, FLAME_Y + 0.07, 0.05), 0.42);
-      this.flameShaft = this.addGlow(0xffd0a0, [0.18, 0.72], new THREE.Vector3(0, FLAME_Y - 0.02, 0.03), 0.26);
-      // extra warm wash onto frosting (emissive bloom stand-in)
-      this.addGlow(0xffb090, 1.35, new THREE.Vector3(0, CAKE_TOP + 0.15, 0.2), 0.22);
-      this.addGlow(0xff90d8, 1.1, new THREE.Vector3(0.35, CAKE_TOP + 0.2, -0.15), 0.14);
+      // warm halo that pools onto the frosting
+      this.flameGlow = this.addGlow(0xffb060, 1.05, new THREE.Vector3(0, FLAME_Y + 0.08, 0.04), 0.68);
+      this.flameBloom = this.addGlow(0xff70c8, 1.35, new THREE.Vector3(0, FLAME_Y + 0.14, 0), 0.32);
+      this.flameHalo = this.addGlow(0xffe4a0, 0.62, new THREE.Vector3(0, FLAME_Y + 0.08, 0.05), 0.52);
+      this.flameShaft = this.addGlow(0xffc070, [0.22, 0.86], new THREE.Vector3(0, FLAME_Y - 0.02, 0.03), 0.32);
+      this.addGlow(0xffa060, 1.7, new THREE.Vector3(0, CAKE_TOP + 0.12, 0.15), 0.32);
+      this.addGlow(0xff78d0, 1.35, new THREE.Vector3(0.35, CAKE_TOP + 0.22, -0.15), 0.2);
+      this.addGlow(0xfff0c0, 1.15, new THREE.Vector3(-0.2, CAKE_TOP + 0.08, 0.28), 0.16);
 
       // keep a primary flame sprite handle for setCandleLit compatibility
       this.flame = this.flameGroup;
@@ -1023,8 +1019,7 @@
       // very soft fresnel shell — open night look, not a heavy snow globe
       const glassMat = new THREE.ShaderMaterial({
         uniforms: {
-          uColor: { value: new THREE.Color(0xe0f0ff) },
-          uOpacity: { value: 0.02 }
+          uOpacity: { value: 0.055 }
         },
         vertexShader: `
           varying vec3 vN;
@@ -1037,13 +1032,13 @@
           }
         `,
         fragmentShader: `
-          uniform vec3 uColor;
           uniform float uOpacity;
           varying vec3 vN;
           varying vec3 vV;
           void main() {
-            float fres = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 5.5);
-            gl_FragColor = vec4(uColor, fres * uOpacity);
+            float fres = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 4.2);
+            vec3 col = mix(vec3(1.0, 0.62, 0.86), vec3(0.55, 0.9, 1.0), fres);
+            gl_FragColor = vec4(col, fres * uOpacity);
           }
         `,
         transparent: true,
@@ -1064,9 +1059,9 @@
       this.root.add(this.ringGroup);
 
       const defs = [
-        { r: CAKE_R * 1.42, tiltX: 0.95, tiltZ: 0.16, speed: 0.3, color: 0xfff8e8, op: 0.72, sparks: 520, size: 0.1 },
-        { r: CAKE_R * 1.66, tiltX: 1.08, tiltZ: -0.2, speed: -0.22, color: 0xffe0b8, op: 0.55, sparks: 400, size: 0.095 },
-        { r: CAKE_R * 1.88, tiltX: 1.18, tiltZ: 0.1, speed: 0.18, color: 0xffc0e8, op: 0.38, sparks: 280, size: 0.08 }
+        { r: CAKE_R * 1.42, tiltX: 0.95, tiltZ: 0.16, speed: 0.3, color: 0xffe29a, op: 0.82, sparks: 520, size: 0.12 },
+        { r: CAKE_R * 1.66, tiltX: 1.08, tiltZ: -0.2, speed: -0.22, color: 0xff78d4, op: 0.66, sparks: 400, size: 0.11 },
+        { r: CAKE_R * 1.88, tiltX: 1.18, tiltZ: 0.1, speed: 0.18, color: 0x7af0ff, op: 0.52, sparks: 280, size: 0.1 }
       ];
 
       defs.forEach((d) => {
@@ -1088,11 +1083,11 @@
         const glowMat = new THREE.MeshBasicMaterial({
           color: d.color,
           transparent: true,
-          opacity: d.op * 0.05,
+          opacity: d.op * 0.32,
           blending: THREE.AdditiveBlending,
           depthWrite: false
         });
-        const glow = new THREE.Mesh(new THREE.TorusGeometry(d.r, 0.022, 6, 320), glowMat);
+        const glow = new THREE.Mesh(new THREE.TorusGeometry(d.r, 0.042, 8, 180), glowMat);
         glow.rotation.x = d.tiltX;
         pivot.add(glow);
 
@@ -1108,7 +1103,7 @@
           pos[i * 3] = x;
           pos[i * 3 + 1] = y;
           pos[i * 3 + 2] = z;
-          const c = new THREE.Color(pick([0xffffff, 0xfff6df, 0xffe08a, 0xffd27a, 0xe8f0ff, 0xffc0e8, 0x90e8ff, 0xff80d0, 0xffb050]));
+          const c = new THREE.Color(pick([0xffffff, 0xfff2c0, 0xffd060, 0xff78d0, 0x7af0ff, 0xfff6ff, 0xc9a0ff, 0xff9a4a]));
           col[i * 3] = c.r;
           col[i * 3 + 1] = c.g;
           col[i * 3 + 2] = c.b;
@@ -1176,7 +1171,7 @@
     }
 
     buildOuterStars() {
-      const N = this.narrow ? 100 : 220;
+      const N = this.narrow ? 130 : 250;
       const pos = new Float32Array(N * 3);
       const col = new Float32Array(N * 3);
       for (let i = 0; i < N; i++) {
@@ -1195,10 +1190,10 @@
       geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
       this.starMat = new THREE.PointsMaterial({
         map: this.sprites.star,
-        size: 0.1,
+        size: 0.128,
         vertexColors: true,
         transparent: true,
-        opacity: 0.82,
+        opacity: 0.94,
         alphaTest: 0.01,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
@@ -1210,7 +1205,7 @@
     }
 
     buildFloatingStars() {
-      const N = this.narrow ? 140 : 300;
+      const N = this.narrow ? 168 : 320;
       const geo = new THREE.ShapeGeometry(starShape(0.5, 0.2));
       const mat = new THREE.MeshBasicMaterial({
         side: THREE.DoubleSide,
@@ -1225,7 +1220,7 @@
         const r = rand(CAKE_R + 0.25, DOME_R * 0.95);
         const y = rand(PLATE_Y + 0.2, DOME_Y + DOME_R * 0.7);
         const a = rand(0, TAU);
-        let s = rand(0.035, 0.14);
+        let s = rand(0.042, 0.16);
         if (Math.random() < 0.07) s *= 1.7;
         this.floaters.push({
           a, r, y, s,
@@ -1241,7 +1236,7 @@
     }
 
     buildFloatingConfetti() {
-      const N = this.narrow ? 90 : 200;
+      const N = this.narrow ? 110 : 220;
       const geo = new THREE.CircleGeometry(0.5, 10);
       const mat = new THREE.MeshBasicMaterial({
         side: THREE.DoubleSide,
@@ -1270,17 +1265,16 @@
     }
 
     buildSceneBokeh() {
-      // sparse, soft multi-color bokeh behind + around the cake (示例.mp4) — keep cake frosting readable
-      for (let i = 0; i < (this.narrow ? 70 : 140); i++) {
+      // soft multi-color bokeh — a few large dream orbs, smaller ones may drift upward
+      for (let i = 0; i < (this.narrow ? 90 : 160); i++) {
         const col = pick(BOKEH_COLORS);
-        const size = Math.random() < 0.14 ? rand(0.8, 1.7)
-          : Math.random() < 0.45 ? rand(0.3, 0.72)
-          : rand(0.1, 0.34);
+        const size = Math.random() < 0.16 ? rand(0.95, 2.05)
+          : Math.random() < 0.48 ? rand(0.34, 0.82)
+          : rand(0.12, 0.36);
         const a = rand(0, TAU);
-        // keep large orbs farther out so cake silhouette stays readable
-        const r = size > 0.8 ? rand(CAKE_R + 1.8, 7.6) : rand(CAKE_R + 0.4, 6.8);
-        const y = rand(-1.4, 4.6);
-        const op = size > 0.85 ? rand(0.1, 0.22) : rand(0.16, 0.42);
+        const r = size > 0.9 ? rand(CAKE_R + 1.6, 7.8) : rand(CAKE_R + 0.35, 6.8);
+        const y = rand(-1.5, 4.8);
+        const op = size > 0.9 ? rand(0.16, 0.34) : rand(0.24, 0.52);
         const parent = Math.random() < 0.4 ? this.scene : this.root;
         const orb = this.addGlow(col, size, new THREE.Vector3(
           (parent === this.scene ? 1.78 : 0) + Math.sin(a) * r,
@@ -1293,25 +1287,26 @@
           size,
           baseOp: op,
           phase: rand(0, TAU),
-          speed: rand(-0.04, 0.04),
-          bob: rand(0.25, 0.85),
-          world: parent === this.scene
+          speed: rand(-0.045, 0.045),
+          bob: rand(0.28, 0.95),
+          world: parent === this.scene,
+          rise: size < 0.4 && Math.random() < 0.6 ? rand(0.05, 0.13) : 0
         });
       }
-      // soft purple mist near plate (d_020) — sparser
-      for (let i = 0; i < (this.narrow ? 12 : 22); i++) {
+      // colored mist hugging the plate
+      for (let i = 0; i < (this.narrow ? 16 : 26); i++) {
         const a = rand(0, TAU);
-        const r = rand(0.4, PLATE_R * 1.35);
+        const r = rand(0.4, PLATE_R * 1.4);
         const mist = this.addGlow(
-          pick([0xc0a0ff, 0x90c0ff, 0xff90e0, 0xffffff, 0xffd090]),
-          rand(1.3, 2.9),
-          new THREE.Vector3(Math.sin(a) * r, PLATE_Y + rand(0.05, 0.55), Math.cos(a) * r),
-          rand(0.08, 0.18)
+          pick([0xffb0e8, 0x9fd4ff, 0xffd090, 0xd8a6ff, 0x7ef0ff, 0xfff4d8, 0xff88c0]),
+          rand(1.5, 3.2),
+          new THREE.Vector3(Math.sin(a) * r, PLATE_Y + rand(0.05, 0.6), Math.cos(a) * r),
+          rand(0.12, 0.26)
         );
         this.bokehOrbs.push({
           s: mist, a, r, y: mist.position.y, size: mist.scale.x,
           baseOp: mist.material.opacity, phase: rand(0, TAU),
-          speed: rand(-0.02, 0.02), bob: 0.35, world: false
+          speed: rand(-0.02, 0.02), bob: 0.4, world: false, rise: 0
         });
       }
     }
@@ -1323,7 +1318,7 @@
           map: this.sprites.streak,
           color: pick([0xffffff, 0xd8e8ff, 0xffe8c0, 0xffd0e8, 0xfff6df, 0xff90d0, 0x90e8ff]),
           transparent: true,
-          opacity: rand(0.16, 0.42),
+          opacity: rand(0.22, 0.5),
           blending: THREE.AdditiveBlending,
           depthWrite: false,
           rotation: rand(-1.05, -0.25)
@@ -1568,10 +1563,10 @@
     setFxMode(mode) {
       this.fxMode = mode;
       const look = {
-        stars: { c: [0xffffff, 0xfff6df], op: [0.72, 0.55], star: 0.82, size: 0.1 },
-        snow: { c: [0xd7ecff, 0xe8f4ff], op: [0.5, 0.38], star: 0.55, size: 0.08 },
-        meteor: { c: [0xffe8c0, 0xffffff], op: [0.78, 0.6], star: 0.92, size: 0.11 },
-        halo: { c: [0xffd7a0, 0xf0a6ff], op: [0.8, 0.62], star: 0.9, size: 0.12 }
+        stars: { c: [0xffe29a, 0xff78d4, 0x7af0ff], op: [0.82, 0.66, 0.52], star: 0.94, size: 0.128 },
+        snow: { c: [0xeaf6ff, 0xd4ecff, 0xffffff], op: [0.55, 0.42, 0.34], star: 0.62, size: 0.09 },
+        meteor: { c: [0xffd27a, 0xfff4e0, 0xff8ec8], op: [0.86, 0.68, 0.52], star: 0.98, size: 0.14 },
+        halo: { c: [0xffc56a, 0xff7ae0, 0xb48cff], op: [0.9, 0.72, 0.56], star: 0.96, size: 0.145 }
       };
       const cfg = look[mode] || look.stars;
       this.rings.forEach((r, i) => {
@@ -1581,11 +1576,11 @@
         r.glow.material.color.setHex(ci);
         r.baseOp = oi;
         r.mesh.material.opacity = oi;
-        r.glow.material.opacity = oi * 0.2;
+        r.glow.material.opacity = oi * 0.32;
       });
       this.starMat.opacity = cfg.star;
       this.starMat.size = cfg.size;
-      if (this.flameGlow) this.flameGlow.material.opacity = mode === 'snow' ? 0.22 : 0.38;
+      if (this.flameGlow) this.flameGlow.material.opacity = mode === 'snow' ? 0.3 : 0.55;
     }
 
     pointer(x, y) {
@@ -1680,31 +1675,34 @@
       } else {
         this.flameGroup.visible = false;
       }
-      this.candleLight.intensity = 4.05 * this.flameLevel * flicker + 0.08;
-      this.candleLight.color.setHex(this.flameLevel > 0.5 ? 0xffd0a0 : 0x9868b8);
-      if (this.flameGlow) this.flameGlow.material.opacity = 0.42 * this.flameLevel * (0.85 + 0.15 * flicker);
-      if (this.flameBloom) this.flameBloom.material.opacity = 0.14 * this.flameLevel;
-      if (this.flameHalo) this.flameHalo.material.opacity = 0.34 * this.flameLevel * flicker;
-      if (this.flameShaft) this.flameShaft.material.opacity = 0.18 * this.flameLevel;
+      this.candleLight.intensity = 5.2 * this.flameLevel * flicker + 0.1;
+      this.candleLight.color.setHex(this.flameLevel > 0.5 ? 0xffa848 : 0xb070d0);
+      if (this.flameGlow) this.flameGlow.material.opacity = 0.62 * this.flameLevel * (0.85 + 0.15 * flicker);
+      if (this.flameBloom) this.flameBloom.material.opacity = 0.28 * this.flameLevel;
+      if (this.flameHalo) this.flameHalo.material.opacity = 0.5 * this.flameLevel * flicker;
+      if (this.flameShaft) this.flameShaft.material.opacity = 0.28 * this.flameLevel;
 
-      this.rings.forEach((r) => {
+      this.rings.forEach((r, i) => {
         r.pivot.rotation.y += motion ? r.speed * dt : 0;
-        r.mesh.material.opacity = r.baseOp * (this.flameLevel > 0.5 ? 1 : 0.7);
-        if (r.sparks) r.sparks.material.opacity = 0.85 + 0.15 * Math.sin(this.time * 2.2);
+        const pulse = 0.86 + 0.14 * Math.sin(this.time * 1.25 + i * 0.8);
+        r.mesh.material.opacity = r.baseOp * (this.flameLevel > 0.5 ? 1 : 0.72) * pulse;
+        if (r.glow) r.glow.material.opacity = r.baseOp * 0.32 * pulse;
+        if (r.sparks) r.sparks.material.opacity = 0.88 + 0.12 * Math.sin(this.time * 2.2 + i);
       });
 
       this.starField.rotation.y = motion ? this.time * 0.028 : 0;
       this.starMat.opacity =
-        (this.fxMode === 'snow' ? 0.55 : this.fxMode === 'meteor' ? 0.92 : 0.82) *
-        (this.flameLevel > 0.4 ? 1 : 0.6);
+        (this.fxMode === 'snow' ? 0.62 : this.fxMode === 'meteor' ? 0.98 : 0.94) *
+        (this.flameLevel > 0.4 ? 1 : 0.72);
 
       for (let i = 0; i < this.floaters.length; i++) {
         const f = this.floaters[i];
         const a = f.a + this.time * f.speed;
-        const bob = Math.sin(this.time * 0.52 + f.phase) * 0.06;
-        const twinkle = 0.84 + 0.16 * Math.sin(this.time * 1.2 + f.phase);
+        const bob = Math.sin(this.time * 0.52 + f.phase) * 0.12;
+        const twinkle = 0.8 + 0.2 * Math.sin(this.time * 1.2 + f.phase);
+        const breatheR = f.r * (1 + Math.sin(this.time * 0.21 + f.phase) * 0.04);
         const d = this.dummy;
-        d.position.set(Math.sin(a) * f.r, f.y + bob, Math.cos(a) * f.r);
+        d.position.set(Math.sin(a) * breatheR, f.y + bob, Math.cos(a) * breatheR);
         d.quaternion.copy(this.camera.quaternion);
         d.rotateZ(f.spin + this.time * f.spinSpeed + Math.sin(this.time * 0.4 + f.phase) * 0.12);
         const s = f.s * twinkle;
@@ -1717,9 +1715,10 @@
       for (let i = 0; i < this.confetti.length; i++) {
         const f = this.confetti[i];
         const a = f.a + this.time * f.speed;
-        const bob = Math.sin(this.time * 0.6 + f.phase) * 0.05;
+        const bob = Math.sin(this.time * 0.6 + f.phase) * 0.09;
+        const breatheR = f.r * (1 + Math.sin(this.time * 0.18 + f.phase) * 0.03);
         const d = this.dummy;
-        d.position.set(Math.sin(a) * f.r, f.y + bob, Math.cos(a) * f.r);
+        d.position.set(Math.sin(a) * breatheR, f.y + bob, Math.cos(a) * breatheR);
         d.quaternion.copy(this.camera.quaternion);
         d.rotateZ(f.spin + this.time * f.spinSpeed);
         const s = f.s * (0.9 + 0.1 * Math.sin(this.time + f.phase));
@@ -1731,12 +1730,16 @@
 
       // drift bokeh
       this.bokehOrbs.forEach((b) => {
+        if (b.rise) {
+          b.y += b.rise * dt;
+          if (b.y > 5.4) b.y = -1.8;
+        }
         const a = b.a + this.time * b.speed;
         const ox = b.world ? 1.78 : 0;
         b.s.position.x = ox + Math.sin(a) * b.r;
         b.s.position.z = Math.cos(a) * b.r * 0.85;
-        b.s.position.y = b.y + Math.sin(this.time * b.bob + b.phase) * 0.15;
-        b.s.material.opacity = b.baseOp * (0.75 + 0.25 * Math.sin(this.time * 0.8 + b.phase));
+        b.s.position.y = b.y + Math.sin(this.time * b.bob + b.phase) * 0.18;
+        b.s.material.opacity = b.baseOp * (0.72 + 0.28 * Math.sin(this.time * 0.8 + b.phase));
       });
 
       this.streaks.forEach((st) => {

@@ -10,14 +10,14 @@
   var bgmEl = document.getElementById('bgm');
 
   var ASSETS = [
-    { url: 'styles.css?v=20261104i', type: 'css', weight: 2 },
+    { url: 'styles.css?v=20261104m', type: 'css', weight: 2 },
     { url: 'vendor/ma-shan-zheng.woff2', type: 'font', weight: 8 },
     { url: 'vendor/great-vibes.woff2', type: 'font', weight: 1 },
     { url: 'birthday-music.mp3', type: 'audio', weight: 18 },
     { url: 'vendor/three.min.js', type: 'script', weight: 6 },
     { url: 'petals.js?v=20261104i', type: 'script', weight: 1 },
-    { url: 'fx.js?v=20261104i', type: 'script', weight: 1 },
-    { url: 'cake.js?v=20261104i', type: 'script', weight: 2 },
+    { url: 'fx.js?v=20261104m', type: 'script', weight: 1 },
+    { url: 'cake.js?v=20261104m', type: 'script', weight: 2 },
     { url: 'sound.js?v=20261104i', type: 'script', weight: 1 },
     { url: 'app.js?v=20261104i', type: 'script', weight: 2 },
     { url: 'custom.js?v=20261104i', type: 'script', weight: 1, optional: true }
@@ -135,7 +135,7 @@
         bgmEl.src = objectUrl('birthday-music.mp3', 'audio/mpeg');
         try { bgmEl.load(); } catch (e) { /* noop */ }
       }
-      return injectStylesheet('styles.css?v=20261104i');
+      return injectStylesheet('styles.css?v=20261104m');
     })
     .then(function () {
       // Fonts are referenced by CSS @font-face; force decode if possible.
@@ -152,8 +152,8 @@
         'custom.js?v=20261104i',
         'vendor/three.min.js',
         'petals.js?v=20261104i',
-        'fx.js?v=20261104i',
-        'cake.js?v=20261104i',
+        'fx.js?v=20261104m',
+        'cake.js?v=20261104m',
         'sound.js?v=20261104i',
         'app.js?v=20261104i'
       ];

@@ -10,7 +10,7 @@
   const lerp = (a, b, t) => a + (b - a) * t;
   const rand = (a, b) => a + Math.random() * (b - a);
 
-  const PALETTE = ['#ffd27a', '#ff9d6e', '#7be8ff', '#b28bff', '#ff7cd0', '#9dffd8', '#fff4cf', '#8fb4ff', '#ffb35c', '#c6a6ff'];
+  const PALETTE = ['#ffd27a', '#ff8a5a', '#5ee8ff', '#c084ff', '#ff62c8', '#7dffd0', '#fff1b8', '#8eb4ff', '#ffb03a', '#ff7eb8', '#d6a6ff', '#9af0ff'];
   const SNOW = ['#eaf6ff', '#cfe7ff', '#ffffff', '#bcd8ff'];
 
   function hexRgb(hex) {
@@ -119,7 +119,7 @@
     }
 
     makeStars() {
-      const count = innerWidth < 700 ? 70 : 180;
+      const count = innerWidth < 700 ? 96 : 200;
       this.stars = [];
       for (let i = 0; i < count; i++) {
         this.stars.push({
@@ -129,7 +129,7 @@
           tw: rand(.4, 1.8),
           phase: rand(0, TAU),
           depth: rand(.2, 1),
-          flare: Math.random() < .08
+          flare: Math.random() < .18
         });
       }
     }
@@ -217,7 +217,7 @@
         r,
         color,
         rgb: hexRgb(color),
-        alpha: isSnow ? rand(.7, .98) : big < .3 ? rand(.22, .48) : rand(.14, .4),
+        alpha: isSnow ? rand(.7, .98) : big < .3 ? rand(.32, .58) : rand(.22, .5),
         vx: isSnow ? rand(-12, 12) : rand(-7, 7),
         vy: isSnow ? rand(32, 72) : rand(-9, 5),
         depth: rand(.25, 1),
@@ -392,7 +392,7 @@
       } else {
         this.particles.forEach(p => { p.dying = true; });
       }
-      const count = mode === 'snow' ? this.snowCap() : mode === 'meteor' ? (innerWidth < 700 ? 28 : 42) : mode === 'halo' ? (innerWidth < 700 ? 36 : 56) : (innerWidth < 700 ? 85 : 140);
+      const count = mode === 'snow' ? this.snowCap() : mode === 'meteor' ? (innerWidth < 700 ? 28 : 42) : mode === 'halo' ? (innerWidth < 700 ? 40 : 60) : (innerWidth < 700 ? 92 : 148);
       for (let i = 0; i < count; i++) this.spawnBokeh(mode, initial || this.reduced);
       this.meteorTimer = 0;
       this.haloTimer = 1.2;
@@ -709,7 +709,8 @@
         const y = s.y * this.h + py * s.depth;
         const r = s.r;
         ctx.globalAlpha = tw * alpha;
-        ctx.fillStyle = i % 7 === 0 ? '#ffe4b8' : '#ffffff';
+        const tint = i % 5 === 0 ? '#ffd0ea' : i % 5 === 1 ? '#ffe4b0' : i % 5 === 2 ? '#c8f4ff' : '#ffffff';
+        ctx.fillStyle = tint;
         ctx.beginPath();
         ctx.arc(x, y, r, 0, TAU);
         ctx.fill();
@@ -973,7 +974,7 @@
       // snow: source-over is cheaper and flakes stay crisp
       const snow = this.mode === 'snow';
       ctx.globalCompositeOperation = snow ? 'source-over' : 'lighter';
-      const starAlpha = snow ? .12 : this.mode === 'meteor' ? .8 : .72;
+      const starAlpha = snow ? .14 : this.mode === 'meteor' ? .88 : .82;
       if (!(snow && this.snowSkipStars)) this.drawStars(starAlpha);
       this.drawBlowHalos();
       this.drawParticles();

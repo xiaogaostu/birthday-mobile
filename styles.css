@@ -141,7 +141,7 @@ p, h1, h2, h3 { margin: 0; }
   background-size: 220px 220px;
 }
 .day .grain { z-index: 13; }
-.night .grain { z-index: 5; opacity: .045; }
+.night .grain { z-index: 5; opacity: .026; }
 
 .day-veil {
   position: absolute;
@@ -1512,7 +1512,7 @@ body.note-open .day.wall .wall-next {
   overflow: hidden;
   opacity: 0;
   visibility: hidden;
-  background: #060611;
+  background: #140820;
   transition: opacity 2.5s ease, visibility 0s linear 2.5s;
 }
 .night.active {
@@ -1522,34 +1522,39 @@ body.note-open .day.wall .wall-next {
 }
 .night.active .night-vignette {
   background:
-    radial-gradient(70% 65% at 50% 45%, transparent 35%, rgba(40, 10, 50, .28) 78%, rgba(8, 2, 20, .55) 100%),
-    linear-gradient(180deg, rgba(60, 20, 80, .22) 0%, transparent 28%, transparent 65%, rgba(20, 8, 40, .4) 100%);
+    radial-gradient(92% 80% at 58% 52%, transparent 40%, rgba(90, 24, 110, .16) 70%, rgba(28, 8, 48, .4) 100%),
+    linear-gradient(180deg, rgba(48, 16, 78, .16) 0%, transparent 20%, transparent 72%, rgba(64, 18, 78, .26) 100%);
 }
 .night-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(48% 52% at 62% 48%, rgba(84, 60, 160, .3), transparent 70%),
-    radial-gradient(36% 40% at 18% 22%, rgba(120, 140, 255, .09), transparent 70%),
-    radial-gradient(40% 48% at 88% 78%, rgba(110, 60, 170, .1), transparent 72%),
-    radial-gradient(22% 18% at 72% 28%, rgba(255, 180, 120, .05), transparent 70%),
-    linear-gradient(158deg, #0b2036 0%, #181034 42%, #170a2e 68%, #0b061c 100%);
+    radial-gradient(46% 40% at 66% 56%, rgba(255, 78, 168, .48), transparent 68%),
+    radial-gradient(38% 34% at 40% 40%, rgba(138, 78, 255, .42), transparent 70%),
+    radial-gradient(30% 26% at 76% 26%, rgba(255, 186, 78, .32), transparent 70%),
+    radial-gradient(36% 32% at 16% 16%, rgba(64, 214, 255, .3), transparent 72%),
+    radial-gradient(32% 30% at 10% 74%, rgba(196, 70, 255, .28), transparent 70%),
+    radial-gradient(28% 24% at 90% 82%, rgba(255, 110, 80, .24), transparent 72%),
+    radial-gradient(22% 18% at 52% 18%, rgba(255, 240, 190, .16), transparent 70%),
+    linear-gradient(165deg, #24104a 0%, #3a1670 26%, #1c2c78 50%, #4a1458 74%, #160818 100%);
 }
 .night-bg::before {
   content: "";
   position: absolute;
-  width: 72vw;
-  height: 72vw;
-  left: -20vw;
-  top: -34vw;
+  width: 92vw;
+  height: 92vw;
+  left: 6vw;
+  top: 16vw;
   border-radius: 50%;
   background: radial-gradient(circle,
-    rgba(255, 247, 220, .24) 0,
-    rgba(222, 222, 255, .09) 30%,
-    transparent 66%);
-  filter: blur(12px);
+    rgba(255, 214, 160, .34) 0,
+    rgba(255, 110, 186, .2) 26%,
+    rgba(130, 90, 255, .14) 50%,
+    transparent 72%);
+  filter: blur(16px);
   mix-blend-mode: screen;
+  animation: nebulaDrift 16s ease-in-out infinite alternate;
 }
 .night-bg::after {
   content: "";
@@ -1557,40 +1562,56 @@ body.note-open .day.wall .wall-next {
   inset: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(circle at 12% 28%, rgba(255, 180, 90, .22) 0 2px, transparent 3px),
-    radial-gradient(circle at 22% 62%, rgba(120, 210, 255, .2) 0 3px, transparent 5px),
-    radial-gradient(circle at 38% 18%, rgba(255, 120, 200, .18) 0 4px, transparent 6px),
-    radial-gradient(circle at 58% 12%, rgba(255, 240, 180, .2) 0 3px, transparent 5px),
-    radial-gradient(circle at 78% 30%, rgba(160, 140, 255, .22) 0 5px, transparent 8px),
-    radial-gradient(circle at 86% 58%, rgba(255, 150, 110, .18) 0 3px, transparent 5px),
-    radial-gradient(circle at 70% 78%, rgba(100, 230, 220, .16) 0 4px, transparent 7px),
-    radial-gradient(circle at 30% 82%, rgba(255, 200, 140, .14) 0 6px, transparent 10px),
-    radial-gradient(circle at 48% 48%, rgba(255, 255, 255, .12) 0 2px, transparent 4px),
-    radial-gradient(circle at 8% 78%, rgba(180, 130, 255, .16) 0 4px, transparent 7px),
-    radial-gradient(circle at 92% 18%, rgba(255, 110, 170, .15) 0 3px, transparent 6px),
-    radial-gradient(circle at 64% 42%, rgba(120, 180, 255, .14) 0 7px, transparent 12px);
+    radial-gradient(circle at 18% 22%, rgba(255, 186, 120, .55) 0 18px, transparent 42px),
+    radial-gradient(circle at 78% 18%, rgba(255, 120, 200, .42) 0 28px, transparent 64px),
+    radial-gradient(circle at 88% 62%, rgba(120, 220, 255, .4) 0 22px, transparent 52px),
+    radial-gradient(circle at 28% 74%, rgba(190, 130, 255, .4) 0 34px, transparent 72px),
+    radial-gradient(circle at 62% 78%, rgba(255, 210, 130, .36) 0 20px, transparent 48px),
+    radial-gradient(circle at 46% 12%, rgba(180, 230, 255, .32) 0 16px, transparent 40px),
+    radial-gradient(circle at 12% 28%, rgba(255, 180, 90, .45) 0 2px, transparent 3px),
+    radial-gradient(circle at 22% 62%, rgba(120, 210, 255, .4) 0 3px, transparent 5px),
+    radial-gradient(circle at 38% 18%, rgba(255, 120, 200, .38) 0 4px, transparent 6px),
+    radial-gradient(circle at 58% 12%, rgba(255, 240, 180, .42) 0 3px, transparent 5px),
+    radial-gradient(circle at 78% 30%, rgba(190, 150, 255, .4) 0 5px, transparent 8px),
+    radial-gradient(circle at 86% 58%, rgba(255, 150, 110, .36) 0 3px, transparent 5px),
+    radial-gradient(circle at 70% 78%, rgba(100, 240, 220, .34) 0 4px, transparent 7px),
+    radial-gradient(circle at 30% 82%, rgba(255, 200, 140, .32) 0 6px, transparent 10px),
+    radial-gradient(circle at 48% 48%, rgba(255, 255, 255, .28) 0 2px, transparent 4px),
+    radial-gradient(circle at 8% 78%, rgba(210, 140, 255, .34) 0 4px, transparent 7px),
+    radial-gradient(circle at 92% 18%, rgba(255, 110, 170, .36) 0 3px, transparent 6px),
+    radial-gradient(circle at 64% 42%, rgba(140, 190, 255, .3) 0 7px, transparent 12px);
   filter: blur(0.4px);
-  opacity: .9;
+  opacity: .95;
   mix-blend-mode: screen;
+  animation: moteTwinkle 8s ease-in-out infinite alternate;
 }
 .night-rays {
   position: absolute;
   inset: -12%;
   z-index: 1;
   background:
-    linear-gradient(118deg, transparent 28%, rgba(190, 210, 255, .06) 39%, transparent 44%),
-    linear-gradient(118deg, transparent 58%, rgba(255, 220, 190, .045) 64%, transparent 68%),
+    linear-gradient(118deg, transparent 22%, rgba(255, 170, 220, .12) 36%, transparent 46%),
+    linear-gradient(118deg, transparent 52%, rgba(255, 214, 140, .1) 62%, transparent 70%),
+    linear-gradient(72deg, transparent 38%, rgba(120, 230, 255, .08) 52%, transparent 62%),
     repeating-linear-gradient(118deg,
       transparent 0 104px,
-      rgba(205, 220, 255, .035) 104px 105px,
-      transparent 105px 214px);
+      rgba(235, 214, 255, .055) 104px 106px,
+      transparent 106px 214px);
   filter: blur(1px);
   animation: raysShift 18s ease-in-out infinite alternate;
   pointer-events: none;
 }
 @keyframes raysShift {
-  from { transform: translate3d(-1%, 0, 0) rotate(-.4deg); opacity: .65; }
+  from { transform: translate3d(-1%, 0, 0) rotate(-.4deg); opacity: .7; }
   to   { transform: translate3d(1%, -1%, 0) rotate(.4deg); opacity: 1; }
+}
+@keyframes nebulaDrift {
+  from { transform: translate3d(0, 0, 0) scale(1); opacity: .82; }
+  to   { transform: translate3d(4%, -3%, 0) scale(1.08); opacity: 1; }
+}
+@keyframes moteTwinkle {
+  from { opacity: .72; }
+  to   { opacity: 1; }
 }
 .night-vignette {
   position: absolute;
@@ -1598,8 +1619,8 @@ body.note-open .day.wall .wall-next {
   z-index: 4;
   pointer-events: none;
   background:
-    radial-gradient(78% 78% at 50% 48%, transparent 52%, rgba(1, 1, 8, .36) 100%),
-    linear-gradient(180deg, rgba(3, 3, 12, .28) 0%, transparent 28%, transparent 72%, rgba(3, 3, 10, .42) 100%);
+    radial-gradient(86% 78% at 58% 50%, transparent 46%, rgba(24, 6, 40, .28) 100%),
+    linear-gradient(180deg, rgba(20, 6, 32, .18) 0%, transparent 22%, transparent 74%, rgba(28, 8, 40, .28) 100%);
 }
 
 .cake {
@@ -2828,7 +2849,7 @@ body.note-open .day.wall .wall-next {
     scroll-behavior: auto !important;
   }
   .card { transition-duration: .25s !important; }
-  .aurora, .aurora::before, .night-rays { animation: none !important; }
+  .aurora, .aurora::before, .night-rays, .night-bg::before, .night-bg::after { animation: none !important; }
   .card-float { animation: none !important; }
   .open-btn::before { animation: none !important; opacity: .35; }
 }
@@ -2843,7 +2864,7 @@ body.note-open .day.wall .wall-next {
   .night-copy { width: min(340px, 24vw); left: clamp(28px, 4.2vw, 72px); }
 }
 .night.revealed.is-out .cake {
-  filter: brightness(0.72) saturate(0.8);
+  filter: brightness(0.84) saturate(0.94);
 }
 .night-bottom {
   /* t41：底部也不做玻璃 */
