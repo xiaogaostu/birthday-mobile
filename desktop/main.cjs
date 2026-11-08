@@ -15,6 +15,7 @@ const OVERLAY_CSS = `
   html, body, #app, .app { background: transparent !important; }
   body { background-color: transparent !important; }
   .day { background: transparent !important; }
+  .day .aurora { opacity: 0 !important; background: none !important; }
   .night { background: transparent !important; }
   .night-bg, .night-rays, .night-vignette { opacity: 0 !important; }
   #boot-screen {
