@@ -1452,7 +1452,8 @@
 
   /** 同步踢一次 play（必须落在用户手势栈里；微信尤其敏感） */
   function kickBgmPlaySync(opts) {
-    if (!bgmEl || bgmUnavailable) return null;
+    // 关闭声音后，任何普通页面手势都不得重新启动音乐。
+    if (!state.soundWanted || !bgmEl || bgmUnavailable) return null;
     try {
       if (!bgmEl.getAttribute('src') && !bgmEl.src) bgmEl.setAttribute('src', BGM_SRC);
       bgmEl.loop = true;
@@ -1473,7 +1474,7 @@
   }
 
   async function startBgm() {
-    if (!bgmEl || bgmUnavailable) return false;
+    if (!state.soundWanted || !bgmEl || bgmUnavailable) return false;
     try {
       if (!bgmEl.getAttribute('src') && !bgmEl.src) bgmEl.setAttribute('src', BGM_SRC);
       bgmEl.loop = true;
@@ -1503,6 +1504,10 @@
         if (playing && playing.then) await playing;
       }
 
+      if (!state.soundWanted) {
+        stopBgm();
+        return false;
+      }
       if (bgmEl.error) {
         markBgmUnavailable();
         return false;
@@ -1521,6 +1526,7 @@
   /** 微信 JSBridge：getNetworkType 回调里 play 是经典解锁 */
   function unlockBgmViaWeixinBridge() {
     const run = () => {
+      if (!state.soundWanted) return;
       try {
         if (typeof WeixinJSBridge === 'undefined' || !WeixinJSBridge.invoke) {
           tryAutoBgm('weixin-ready').catch(() => {});
@@ -1598,7 +1604,6 @@
   function playPaperTearSfx() {
     if (!state.soundWanted) return false;
     try {
-      state.soundOn = true;
       duckBgmBrief(1300);
       const bus = ensureSfxBusSync();
       if (!bus) return false;
@@ -1632,6 +1637,7 @@
 
   async function tryAutoBgm(reason) {
     try {
+      if (!state.soundWanted) return false;
       if (state.soundOn && state.bgmActive) return true;
       const ok = await startSound();
       return !!ok;
@@ -1641,7 +1647,8 @@
   }
 
   async function startSound() {
-    state.soundWanted = true;
+    // 只能由声音按钮显式开启；普通页面点击不能改变用户的静音选择。
+    if (!state.soundWanted) return false;
     // Already playing BGM for real
     if (state.bgmActive && bgmEl && !bgmEl.paused && !bgmEl.muted) {
       state.soundOn = true;
@@ -1666,6 +1673,10 @@
     }
     ensureSfxBusSync();
     const bgmOk = await startBgm();
+    if (!state.soundWanted) {
+      stopBgm();
+      return false;
+    }
     if (bgmOk) {
       // Keep a separate SFX AudioContext running; do NOT suspend sfxAmbient.
       // Only suspend the music-box pad context if it isn't the SFX bus.
@@ -1866,8 +1877,10 @@
       e.stopPropagation();
     }
     // 手势栈内同步 play（微信/安卓 WebView 必须）
-    kickBgmPlaySync({ muted: false });
-    tryAutoBgm('intro-open');
+    if (state.soundWanted) {
+      kickBgmPlaySync({ muted: false });
+      tryAutoBgm('intro-open');
+    }
     if (state.mode === 'intro') goHeart();
   };
   openBtn.addEventListener('click', triggerOpen);
@@ -1907,10 +1920,11 @@
     wallTitle.setAttribute('aria-hidden', 'false');
     live.textContent = '撕开信封…';
     // 手势内：先解锁 BGM/微信，再立刻同步撕纸音（不要等 async，否则会丢手势音频权限）
-    state.soundWanted = true;
-    kickBgmPlaySync({ muted: false });
-    ensureSfxBusSync();
-    playPaperTearSfx();
+    if (state.soundWanted) {
+      kickBgmPlaySync({ muted: false });
+      ensureSfxBusSync();
+      playPaperTearSfx();
+    }
     // BGM 异步跟上；若首发撕纸失败再补一次
     Promise.resolve(tryAutoBgm('tear')).then(() => {
       // WeChat 解锁后补强：若刚才没声，再撕一次短尾
@@ -2342,7 +2356,7 @@
         return;
       }
       // 同步 play 抢在异步逻辑前；顺带解锁 SFX 总线（撕信封要用）
-      state.soundWanted = true;
+      if (!state.soundWanted) return;
       kickBgmPlaySync({ muted: false });
       ensureSfxBusSync();
       tryAutoBgm('gesture-' + (ev && ev.type ? ev.type : 'x')).catch(() => {});
@@ -2355,7 +2369,7 @@
 
     // 页面从后台回前台再试（微信切回来常见）
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible' && bgmWanted && bgmEl && bgmEl.paused) {
+      if (document.visibilityState === 'visible' && state.soundWanted && bgmWanted && bgmEl && bgmEl.paused) {
         kickBgmPlaySync({ muted: false });
         tryAutoBgm('visible').catch(() => {});
       }
