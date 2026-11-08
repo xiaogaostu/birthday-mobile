@@ -12,7 +12,7 @@
      ---------------------------------------------------------- */
   const CUSTOM_KEY = 'birthday_custom_v1';
   const CONFIG_DEFAULT = {
-    name: '吴文同学',
+    name: '小高同学',
     letterTitle: '致特别的你：',
     letterSign: '祝福你的人',
     autoSound: true,
