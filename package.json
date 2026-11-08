@@ -1,0 +1,56 @@
+{
+  "name": "birthday-desktop-surprise",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offline transparent Windows desktop birthday animation",
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win portable",
+    "dist:win:installer": "electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.xiaogaostu.birthdaydesktop",
+    "productName": "Birthday Surprise",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "desktop/**/*",
+      "index.html",
+      "styles.css",
+      "app.js",
+      "boot-loader.js",
+      "petals.js",
+      "fx.js",
+      "cake.js",
+      "sound.js",
+      "custom.js",
+      "birthday-music.mp3",
+      "vendor/**/*",
+      "assets/**/*",
+      "README.md"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "artifactName": "Birthday-Surprise-${version}-Windows.${ext}"
+    },
+    "portable": {
+      "artifactName": "Birthday-Surprise-${version}-Portable.${ext}"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
