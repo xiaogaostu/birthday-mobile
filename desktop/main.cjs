@@ -1,7 +1,11 @@
 'use strict';
 
+// Desktop presentation should be able to start the bundled ambience without
+// requiring a second click inside the app. The in-page sound toggle remains authoritative.
 const { app, BrowserWindow, globalShortcut } = require('electron');
 const path = require('node:path');
+
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 
 const APP_ROOT = path.join(__dirname, '..');
 let win = null;
