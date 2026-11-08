@@ -13,7 +13,7 @@
     { url: 'styles.css?v=20261104m', type: 'css', weight: 2 },
     { url: 'vendor/ma-shan-zheng.woff2', type: 'font', weight: 8 },
     { url: 'vendor/great-vibes.woff2', type: 'font', weight: 1 },
-    { url: 'birthday-music.mp3', type: 'audio', weight: 18 },
+    { url: 'birthday-music.mp3', type: 'audio', weight: 18, optional: true },
     { url: 'vendor/three.min.js', type: 'script', weight: 6 },
     { url: 'petals.js?v=20261104i', type: 'script', weight: 1 },
     { url: 'fx.js?v=20261104m', type: 'script', weight: 1 },

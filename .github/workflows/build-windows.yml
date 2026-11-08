@@ -1,0 +1,32 @@
+name: Build Windows desktop app
+
+on:
+  push:
+    branches:
+      - windows-desktop-overlay
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Build portable EXE
+        run: npm run dist:win
+      - name: Upload portable EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: Birthday-Surprise-Windows
+          path: release/*.exe
+          if-no-files-found: error
+          retention-days: 14
