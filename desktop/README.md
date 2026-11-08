@@ -30,7 +30,7 @@ npm run dist:win:installer
 - 程序使用 Electron 内嵌 Chromium，不会打开 Chrome/Edge 浏览器。
 - 当前窗口覆盖主显示器，透明窗口与页面中的动画图层叠加。
 - 页面原有日间/夜间背景层在桌面模式下被隐藏，保留花瓣、卡片、文字、蛋糕、星空粒子和页面交互。
-- 背景音乐如果需要使用真实歌曲，请把你有权分发的音频放到仓库根目录 `birthday-music.mp3`。没有歌曲时会使用项目内置 WebAudio 音乐盒。
+- 仓库根目录现有的 `birthday-music.mp3` 会随 EXE 一起打包，并由原页面预加载播放；若音频文件不可用，页面仍可使用项目内置 WebAudio 音乐盒作为后备。
 - WebGL/硬件加速由 Electron 默认启用，以支持 Three.js 蛋糕。少数显卡/驱动可能需要真机测试。
 - 未签名 EXE 在部分 Windows 设备上可能出现 SmartScreen 提示；正式公开分发建议购买代码签名证书并签名。
 - 需要在 Windows 环境执行构建，当前仓库提交的是可构建源代码，不是已编译的 EXE。
